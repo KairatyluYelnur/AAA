@@ -1,0 +1,33 @@
+﻿@model IEnumerable<AAA.Models.Employee>
+
+@{
+    ViewData["Title"] = "Сотрудники";
+}
+
+<h2>Сотрудники</h2>
+<a class="btn btn-primary mb-3" asp-action="Create">Добавить</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ФИО</th>
+            <th>Должность</th>
+            <th>Ставка (₽/ч)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var employee in Model)
+        {
+            <tr>
+                <td>@employee.FullName</td>
+                <td>@employee.Position</td>
+                <td>@employee.HourlyRate</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-warning">Изменить</a>
+                    <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-sm btn-danger">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

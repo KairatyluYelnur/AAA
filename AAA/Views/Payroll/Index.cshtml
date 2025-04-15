@@ -1,0 +1,43 @@
+﻿@model IEnumerable<AAA.Models.Payroll>
+
+@{
+    ViewData["Title"] = "Зарплаты сотрудников";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="get">
+    <div class="form-group mb-3">
+        <label for="from">Период с</label>
+        <input type="date" name="from" id="from" class="form-control" value="@Context.Request.Query["from"]" />
+    </div>
+
+    <div class="form-group mb-3">
+        <label for="to">Период по</label>
+        <input type="date" name="to" id="to" class="form-control" value="@Context.Request.Query["to"]" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Применить</button>
+</form>
+
+<table class="table table-striped mt-4">
+    <thead>
+        <tr>
+            <th>Сотрудник</th>
+            <th>Период</th>
+            <th>Отработано часов</th>
+            <th>Зарплата</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @* <td>@item.Employee.FullName</td> *@
+                <td>@item.PeriodStart.ToShortDateString() - @item.PeriodEnd.ToShortDateString()</td>
+                <td>@item.TotalHours</td>
+                <td>@item.TotalPay.ToString("C2")</td>
+            </tr>
+        }
+    </tbody>
+</table>

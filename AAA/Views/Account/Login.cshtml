@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Вход";
+}
+
+<h2>Вход</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label>Логин</label>
+        <input type="text" name="username" class="form-control" required />
+    </div>
+    <div class="mb-3">
+        <label>Пароль</label>
+        <input type="password" name="password" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Войти</button>
+    <a class="nav-link" asp-controller="Account" asp-action="Register">Регистрация</a>
+    @if (ViewBag.Error != null)
+    {
+        <div class="text-danger mt-3">@ViewBag.Error</div>
+    }
+</form>

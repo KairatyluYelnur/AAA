@@ -1,0 +1,36 @@
+﻿@model IEnumerable<AAA.Models.WorkLog>
+
+@{
+    ViewData["Title"] = "Рабочие часы";
+}
+
+<h2>@ViewData["Title"]</h2>
+<a class="btn btn-primary mb-3" asp-action="Create">Добавить запись</a>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Сотрудник</th>
+            <th>Начало</th>
+            <th>Конец</th>
+            <th>Отработано (ч)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model)
+        {
+            var hours = (log.EndTime - log.StartTime).TotalHours;
+            <tr>
+                <td>@log.Employee.FullName</td>
+                <td>@log.StartTime</td>
+                <td>@log.EndTime</td>
+                <td>@hours</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@log.Id" class="btn btn-sm btn-warning">Изменить</a>
+                    <a asp-action="Delete" asp-route-id="@log.Id" class="btn btn-sm btn-danger">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
