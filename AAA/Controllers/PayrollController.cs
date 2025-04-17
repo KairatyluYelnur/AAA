@@ -28,10 +28,10 @@ namespace AAA.Controllers
     .Where(w => w.StartTime >= from && w.StartTime <= to)
     .ToListAsync();
 
-#pragma warning disable CS8602 // Разыменование вероятной пустой ссылки.
+#pragma warning disable CS8602 
             var payroll = logs
     .GroupBy(w => w.Employee)
-    .Where(g => g.Key != null) // Проверка на null
+    .Where(g => g.Key != null) 
     .Select(g => new Payroll
     {
         Employee = g.Key,
@@ -40,7 +40,7 @@ namespace AAA.Controllers
         TotalHours = g.Sum(w => w.Duration),
         TotalPay = (decimal)g.Sum(w => w.Duration) * g.Key.HourlyRate
     }).ToList();
-#pragma warning restore CS8602 // Разыменование вероятной пустой ссылки.
+#pragma warning restore CS8602 
 
             return View(payroll);
         }

@@ -72,7 +72,7 @@ namespace AAA.Controllers
             var user = new User
             {
                 Username = username,
-                Password = password // в видосе показали как хешировать пароль можно сделать потом
+                Password = password // в видосе показали как хешировать пароль можно сделать поо
             };
 
             _context.User.Add(user);

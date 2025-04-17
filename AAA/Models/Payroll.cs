@@ -28,7 +28,7 @@ namespace AAA.Models
         public double TotalHours { get; set; }
 
         [Required]
-        [Display(Name = "Начислено зарплаты (₽)")]
+        [Display(Name = "Начислено зарплаты (Тг)")]
         public decimal TotalPay { get; set; }
     }
 }
