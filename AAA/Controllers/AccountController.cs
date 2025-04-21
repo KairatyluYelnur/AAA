@@ -7,7 +7,6 @@ using System.Security.Claims;
 
 namespace AAA.Controllers
 {
-
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,7 +23,7 @@ namespace AAA.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password)
+        public async Task<IActionResult> Login(string username, string password, bool remember)
         {
             var user = _context.User
                 .FirstOrDefault(u => u.Username == username && u.Password == password);
@@ -43,11 +42,16 @@ namespace AAA.Controllers
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = remember, // сохраняем куки между сессиями
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // можно настроить срок действия
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
             return RedirectToAction("Index", "Employees");
         }
-
 
         [HttpGet]
         public IActionResult Register()
@@ -73,7 +77,7 @@ namespace AAA.Controllers
             var user = new User
             {
                 Username = username,
-                Password = password // в видосе показали как хешировать пароль можно сделать потом
+                Password = password // Временно. Позже — хеширование
             };
 
             _context.User.Add(user);
@@ -94,3 +98,4 @@ namespace AAA.Controllers
         }
     }
 }
+
