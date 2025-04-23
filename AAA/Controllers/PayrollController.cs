@@ -1,11 +1,13 @@
 ﻿using AAA.Data;
 using AAA.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace AAA.Controllers
 {
+    [Authorize]
     public class PayrollController : Controller
     {
         private readonly ApplicationDbContext _context;
