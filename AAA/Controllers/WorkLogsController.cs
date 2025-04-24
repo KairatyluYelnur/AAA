@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using AAA.Data;
 using Microsoft.EntityFrameworkCore;
 using AAA.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AAA.Controllers
 {
+    [Authorize]
     public class WorkLogsController : Controller
     {
         private readonly ApplicationDbContext _context;

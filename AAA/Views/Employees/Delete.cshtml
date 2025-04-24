@@ -4,25 +4,33 @@
     ViewData["Title"] = "Удалить сотрудника";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
 
-<h4>Вы уверены, что хотите удалить этого сотрудника?</h4>
+<div class="alert alert-warning">
+    <h5>Вы уверены, что хотите удалить этого сотрудника?</h5>
+</div>
 
-<div>
-    <dl class="row">
-        <dt class="col-sm-2">ФИО</dt>
-        <dd class="col-sm-10">@Model.FullName</dd>
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3 text-end fw-semibold">ФИО</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
 
-        <dt class="col-sm-2">Должность</dt>
-        <dd class="col-sm-10">@Model.Position</dd>
+            <dt class="col-sm-3 text-end fw-semibold">Должность</dt>
+            <dd class="col-sm-9">@Model.Position</dd>
 
-        <dt class="col-sm-2">Ставка (₽/ч)</dt>
-        <dd class="col-sm-10">@Model.HourlyRate</dd>
-    </dl>
+            <dt class="col-sm-3 text-end fw-semibold">Ставка (₽/ч)</dt>
+            <dd class="col-sm-9">@Model.HourlyRate</dd>
+        </dl>
+    </div>
 </div>
 
 <form asp-action="Delete">
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Удалить
+        </button>
+        <a asp-action="Index" class="btn btn-secondary">Отмена</a>
+    </div>
 </form>
