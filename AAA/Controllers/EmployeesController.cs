@@ -30,7 +30,9 @@ namespace AAA.Controllers
 
 
     [HttpPost]
-            public async Task<IActionResult> Create(Employee employee)
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Employee employee)
             {
                 if (ModelState.IsValid)
                 {
@@ -40,15 +42,16 @@ namespace AAA.Controllers
                 }
                 return View(employee);
             }
-
-            public async Task<IActionResult> Edit(int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id)
             {
                 var employee = await _context.Employees.FindAsync(id);
                 return employee == null ? NotFound() : View(employee);
             }
 
             [HttpPost]
-            public async Task<IActionResult> Edit(Employee employee)
+        [Authorize(Roles = "Admin")][ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Employee employee)
             {
                 if (ModelState.IsValid)
                 {
@@ -66,7 +69,9 @@ namespace AAA.Controllers
             }
 
             [HttpPost, ActionName("Delete")]
-            public async Task<IActionResult> DeleteConfirmed(int id)
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
             {
                 var employee = await _context.Employees.FindAsync(id);
                 if (employee != null)

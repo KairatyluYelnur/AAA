@@ -5,9 +5,13 @@
 }
 
 <h2 class="text-center my-4">Сотрудники</h2>
-<a class="btn btn-success mb-3" asp-action="Create">
-    <i class="fas fa-plus-circle"></i> Добавить
-</a>
+
+@if (User.IsInRole("Admin"))
+{
+    <a class="btn btn-success mb-3" asp-action="Create">
+        <i class="fas fa-plus-circle"></i> Добавить
+    </a>
+}
 
 <div class="table-responsive">
     <table class="table table-bordered">
@@ -16,7 +20,10 @@
                 <th>ФИО</th>
                 <th>Должность</th>
                 <th>Ставка (₸/ч)</th>
-                <th class="text-center">Действия</th>
+                @if (User.IsInRole("Admin"))
+                {
+                    <th class="text-center">Действия</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -26,17 +33,19 @@
                     <td>@employee.FullName</td>
                     <td>@employee.Position</td>
                     <td>@employee.HourlyRate</td>
-                    <td class="text-center">
-                        <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i> Изменить
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-sm btn-danger">
-                            <i class="fas fa-trash-alt"></i> Удалить
-                        </a>
-                    </td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Изменить
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash-alt"></i> Удалить
+                            </a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
     </table>
 </div>
-

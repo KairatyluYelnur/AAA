@@ -1,106 +1,131 @@
-﻿@{
+﻿@model RegisterViewModel
+@{
     ViewData["Title"] = "Регистрация";
 }
 
-<h2 class="text-center my-4">Регистрация</h2>
-
-<form method="post" class="container">
-    <div class="mb-3 position-relative">
-        <label for="username" class="form-label">Логин</label>
-        <input type="text" name="username" id="username" class="form-control" required placeholder="Введите ваш логин" />
-        <i class="bi bi-person position-absolute top-50 start-0 translate-middle-y ms-3"></i>
-    </div>
-
-    <div class="mb-3 position-relative">
-        <label for="password" class="form-label">Пароль</label>
-        <input type="password" name="password" id="password" class="form-control" required placeholder="Введите пароль" />
-        <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword"></i>
-    </div>
-
-    <div class="mb-3">
-        <label for="confirmPassword" class="form-label">Подтверждение пароля</label>
-        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required placeholder="Подтвердите пароль" />
-        <div id="passwordHelp" class="form-text">Пароли должны совпадать</div>
-    </div>
-
-    <button type="submit" class="btn btn-success w-100 py-2">Зарегистрироваться</button>
-
-    @if (ViewBag.Error != null)
-    {
-        <div class="text-danger mt-3 text-center">@ViewBag.Error</div>
-    }
-</form>
-
-<script>
-    // Переключение видимости пароля
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordField = document.getElementById('password');
-    const passwordHelp = document.getElementById('passwordHelp');
-
-    togglePassword.addEventListener('click', () => {
-        const type = passwordField.type === 'password' ? 'text' : 'password';
-        passwordField.type = type;
-        togglePassword.classList.toggle('bi-eye');
-        togglePassword.classList.toggle('bi-eye-slash');
-    });
-
-    // Проверка совпадения паролей перед отправкой формы
-    const form = document.querySelector('form');
-    form.addEventListener('submit', (event) => {
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        if (password !== confirmPassword) {
-            event.preventDefault();
-            passwordHelp.textContent = "Пароли не совпадают!";
-            passwordHelp.classList.add('text-danger');
-        } else {
-            passwordHelp.textContent = "Пароли совпадают.";
-            passwordHelp.classList.remove('text-danger');
-            passwordHelp.classList.add('text-success');
-        }
-    });
-</script>
-
 <style>
     body {
-        font-family: Arial, sans-serif;
+        background: linear-gradient(120deg, #f8f9fa, #e9ecef);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     .container {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        margin-top: 50px;
+        animation: fadeIn 0.6s ease-in-out;
     }
 
-    .text-danger {
-        color: #dc3545;
-        font-weight: bold;
-    }
-
-    .text-success {
-        color: #28a745;
-        font-weight: bold;
-    }
-
-    #passwordHelp {
-        font-size: 0.875rem;
-        margin-top: 5px;
-        transition: color 0.3s ease;
-    }
-
-    @@keyframes shake {
-        0% {
-            transform: translateX(-10px);
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
-
-        50% {
-            transform: translateX(10px);
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        100% {
-            transform: translateX(0);
-        }
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    .password-container {
+        position: relative;
+    }
+
+    .bi-eye-slash, .bi-eye {
+        cursor: pointer;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
     }
 </style>
+
+<div class="container">
+    <div class="card shadow-lg">
+        <div class="card-body p-4">
+            <h2 class="text-center mb-4">Регистрация</h2>
+            
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <form method="post" asp-action="Register">
+                <!-- Логин -->
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input asp-for="Username" class="form-control" placeholder="Введите логин" />
+                    </div>
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+
+                <!-- Полное имя -->
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                        <input asp-for="FullName" class="form-control" placeholder="Введите ваше имя" />
+                    </div>
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <!-- Пароль -->
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <div class="input-group password-container">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input asp-for="Password" id="password" class="form-control" placeholder="Введите пароль" />
+                        <i class="bi bi-eye-slash" id="togglePassword"></i>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Подтверждение пароля -->
+                <div class="mb-4">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Подтвердите пароль" />
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Чекбокс администратора -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="form-check mb-4">
+                        <input asp-for="IsAdmin" class="form-check-input" />
+                        <label asp-for="IsAdmin" class="form-check-label"></label>
+                    </div>
+                }
+
+                <!-- Кнопка регистрации -->
+                <button type="submit" class="btn btn-success w-100 py-2">Зарегистрироваться</button>
+
+                <!-- Ссылка на вход -->
+                <div class="text-center mt-3">
+                    Уже есть аккаунт? <a asp-controller="Account" asp-action="Login" class="text-success">Войти</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Переключение видимости пароля
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordField = document.getElementById('password');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordField.type === 'password' ? 'text' : 'password';
+            passwordField.type = type;
+            togglePassword.classList.toggle('bi-eye');
+            togglePassword.classList.toggle('bi-eye-slash');
+        });
+    </script>
+}

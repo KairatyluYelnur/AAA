@@ -1,0 +1,19 @@
+﻿@page
+@model AAA.Views.Account.AccessDeniedModel
+@{
+    ViewData["Title"] = "Доступ запрещен";
+}
+
+<div class="alert alert-danger mt-5">
+    <h1 class="text-center">
+        <i class="bi bi-slash-circle"></i> Доступ запрещен!
+    </h1>
+    <p class="text-center mt-3">
+        У вас недостаточно прав для просмотра этой страницы
+    </p>
+    <div class="text-center mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">
+            <i class="bi bi-house-door"></i> На главную
+        </a>
+    </div>
+</div>

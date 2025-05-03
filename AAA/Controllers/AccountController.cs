@@ -2,6 +2,8 @@
 using AAA.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -9,11 +11,18 @@ namespace AAA.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
@@ -23,35 +32,34 @@ namespace AAA.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string username, string password, bool remember)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var user = _context.User
-                .FirstOrDefault(u => u.Username == username && u.Password == password);
-
-            if (user == null)
+            if (ModelState.IsValid)
             {
-                ViewBag.Error = "Неверный логин или пароль.";
-                return View();
+                var user = await _userManager.FindByNameAsync(model.Username);
+
+                if (user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Пользователь не найден");
+                    return View(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(
+                    user,
+                    model.Password,
+                    model.RememberMe,
+                    lockoutOnFailure: false);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Employees");
+                }
+
+                ModelState.AddModelError(string.Empty, "Неверный пароль");
             }
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Username)
-            };
-
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
-
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = remember, // сохраняем куки между сессиями
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(7) // можно настроить срок действия
-            };
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
-
-            return RedirectToAction("Index", "Employees");
+            return View(model);
         }
+
 
         [HttpGet]
         public IActionResult Register()
@@ -59,37 +67,46 @@ namespace AAA.Controllers
             return View();
         }
 
+
         [HttpPost]
-        public IActionResult Register(string username, string password, string confirmPassword)
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (password != confirmPassword)
+            if (ModelState.IsValid)
             {
-                ViewBag.Error = "Пароли не совпадают.";
-                return View();
+                var user = new ApplicationUser
+                {
+                    UserName = model.Username,
+          
+                    FullName = model.FullName
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+
+                if (result.Succeeded)
+                {
+                    // Для обычных пользователей назначаем роль User
+                    await _userManager.AddToRoleAsync(user, "User");
+
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
-
-            if (_context.User.Any(u => u.Username == username))
-            {
-                ViewBag.Error = "Пользователь с таким именем уже существует.";
-                return View();
-            }
-
-            var user = new User
-            {
-                Username = username,
-                Password = password // Временно. Позже — хеширование
-            };
-
-            _context.User.Add(user);
-            _context.SaveChanges();
-
-            return RedirectToAction("Login");
+            return View(model);
         }
 
+        [HttpPost] // Обязательно используйте HttpPost для выхода!
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            return RedirectToAction("Login");
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult AccessDenied()
@@ -98,4 +115,3 @@ namespace AAA.Controllers
         }
     }
 }
-

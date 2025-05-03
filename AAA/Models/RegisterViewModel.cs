@@ -5,18 +5,25 @@ namespace AAA.Models
 {
     public class RegisterViewModel
     {
-        [Required]
-        [StringLength(100, ErrorMessage = "Имя пользователя должно быть не менее 3 символов.", MinimumLength = 3)]
+        [Required(ErrorMessage = "Логин обязателен")]
+        [StringLength(50, MinimumLength = 3, ErrorMessage = "Логин должен быть от 3 до 50 символов")]
         public required string Username { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "Пароль должен содержать не менее 6 символов.", MinimumLength = 6)]
+        [Required(ErrorMessage = "Пароль обязателен")]
         [DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Пароль должен быть от 6 до 100 символов")]
         public required string Password { get; set; }
 
-        [Required]
-        [Compare("Password", ErrorMessage = "Пароли не совпадают.")]
+        [Required(ErrorMessage = "Подтвердите пароль")]
         [DataType(DataType.Password)]
+        [Compare("Password", ErrorMessage = "Пароли не совпадают")]
         public required string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "Полное имя обязательно")]
+        [Display(Name = "Полное имя")]
+        public required string FullName { get; set; }
+
+        [Display(Name = "Создать как администратора")]
+        public bool IsAdmin { get; set; }
     }
 }

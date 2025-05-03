@@ -10,19 +10,17 @@ namespace AAA.Data
     //Связывает модели с SQL
     //используем фреймворк indentity
 
-    
+
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
 
-        
+
         public DbSet<Employee> Employees { get; set; }
         public DbSet<WorkLog> WorkLogs { get; set; }
-        public DbSet<User> User { get; set; }
+        //public DbSet<User> User { get; set; }
 
 
         //Если удалить сотрудника — его рабочие записи (WorkLogs) тоже удалятся автоматически 
